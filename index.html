@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>For you</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700&family=Fraunces:ital,wght@1,400;1,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#12020a; --wine:#3a0618; --red:#ff1744; --pink:#ff4fa3; --blush:#ffd1e3;
+  --edge:rgba(255,120,170,.35);
+}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{
+  font-family:"Syne",system-ui,sans-serif;color:var(--blush);
+  background:radial-gradient(120% 90% at 50% 0%,var(--wine),var(--bg) 70%);
+  display:grid;place-items:center;padding:20px;overflow:hidden;
+}
+  .glow { position: fixed; border-radius: 50%; filter: blur(90px); opacity: .75; animation: drift 14s ease-in-out infinite alternate; z-index: 0; }
+  .g1 { width: 46vmax; height: 46vmax; background: var(--red);  top: -14vmax; left: -12vmax; }
+  .g2 { width: 40vmax; height: 40vmax; background: var(--pink); bottom: -16vmax; right: -10vmax; animation-delay: -6s; }
+  .g3 { width: 22vmax; height: 22vmax; background: #b0145a; top: 40%; left: 55%; animation-delay: -3s; }
+  @keyframes drift { to { transform: translate(5vmax, 4vmax) scale(1.12); } }
+
+.card{
+  position:relative;z-index:1;width:min(400px,100%);padding:24px 22px 20px;text-align:center;
+  width: min(440px, 100%);
+    height: min(720px, calc(100vh - 40px)); height: min(720px, calc(100dvh - 40px));
+    max-height: calc(100dvh - 40px);
+    overflow: hidden;
+      border: 1px solid var(--edge);
+      border-radius: 30px;
+    padding: 26px 24px 22px;
+    -webkit-backdrop-filter: blur(26px) saturate(150%);
+    backdrop-filter: blur(26px) saturate(150%);
+    box-shadow: 0 0 0 1px rgba(255,255,255,.05) inset, 0 0 46px rgba(255, 42, 120, .35), 0 30px 80px rgba(0,0,0,.5);
+  background:rgba(255,255,255,.07);border:1px solid var(--edge);border-radius:30px;
+  backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);
+  box-shadow:0 0 0 1px rgba(255,255,255,.05) inset,0 0 40px rgba(255,23,68,.25),0 30px 80px rgba(0,0,0,.5);
+}
+
+/* photo: put your picture next to this file and name it photo.jpg */
+.photo{
+  width:100%;aspect-ratio:1;border-radius:22px;overflow:hidden;position:relative;
+  border:1px solid var(--edge);
+  background:linear-gradient(135deg,rgba(255,23,68,.45),rgba(255,79,163,.45));
+  box-shadow:0 0 30px rgba(255,79,163,.45);
+}
+.photo img{width:100%;height:100%;object-fit:cover;display:block}
+.photo .ph{position:absolute;inset:0;display:grid;place-items:center;font-size:.85rem;opacity:.8;padding:20px}
+.photo img:not([hidden]) ~ .ph{display:none}
+
+.title{font-weight:700;font-size:1.2rem;margin-top:18px;text-shadow:0 0 14px var(--pink)}
+.artist{font-size:.85rem;opacity:.7;margin-top:2px}
+
+.bar{height:5px;border-radius:9px;background:rgba(255,255,255,.14);margin-top:16px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--red),var(--pink));box-shadow:0 0 10px var(--pink)}
+.times{display:flex;justify-content:space-between;font-size:.72rem;opacity:.6;margin:6px 0 12px}
+
+.play{
+  width:58px;height:58px;border-radius:50%;border:1px solid var(--edge);cursor:pointer;color:#fff;
+  background:linear-gradient(135deg,var(--red),var(--pink));box-shadow:0 0 22px rgba(255,23,68,.6);
+  display:inline-grid;place-items:center;transition:transform .15s;
+}
+.play:active{transform:scale(.94)}
+.play svg{width:22px;height:22px;fill:#fff}
+
+.msg{
+  display:block;width:100%;margin-top:18px;padding:14px 16px;border-radius:16px;cursor:pointer;
+  font:inherit;color:inherit;font-family:"Fraunces",Georgia,serif;font-style:italic;font-size:.98rem;line-height:1.45;
+  background:rgba(0,0,0,.28);border:1px solid rgba(255,120,170,.25);
+  text-shadow:0 0 10px rgba(255,79,163,.5);transition:box-shadow .2s;
+}
+.msg:hover{box-shadow:0 0 18px rgba(255,79,163,.4)}
+.msg span{display:block;transition:opacity .3s}
+.hint{font-size:.7rem;opacity:.65;margin-top:10px;min-height:1em}
+:focus-visible{outline:2px solid var(--pink);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="glow g1"></div><div class="glow g2"></div>
+
+<main class="card">
+  <div class="photo">
+    <img id="photo" src="710091066282678895.jpe" alt="" onerror="this.hidden=true">
+    <div class="ph"><b></b><br></div>
+  </div>
+
+  <div class="title" id="title">Song title</div>
+  <div class="artist" id="artist">Artist</div>
+
+  <div class="bar"><i id="fill"></i></div>
+  <div class="times"><span id="cur">0:00</span><span id="dur">0:00</span></div>
+
+  <button class="play" id="play" aria-label="Play or pause"></button>
+
+  <button class="msg" id="msg" aria-live="polite" title="Tap for the next message"><span id="msgText"></span></button>
+  <div class="hint" id="hint"></div>
+</main>
+
+<audio id="audio" preload="auto"></audio>
+
+<script>
+/* ============ EDIT THIS PART ============ */
+// Audio files go in a "songs" folder next to this file. Songs play in this order, one after another.
+const SONGS = [
+  { title:"Close to my heart",       artist:"Bocchi", audio:"close to my heart-shree.m4a" },
+  
+];
+
+// Your own words. The message changes with each new song, and she can tap the box to see the next one.
+const MESSAGES = [
+  "as they say... songs can say what words can't, lets see if its true",
+ 
+];
+
+// Page that opens after the last song. Leave as "" to just stop (or loop, see LOOP).
+const LETTER_PAGE = "letter.html";
+const LOOP = true;   // only used when LETTER_PAGE is ""
+/* ======================================== */
+
+const $ = id => document.getElementById(id);
+const audio = $("audio");
+const PLAY = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+const PAUSE = '<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>';
+const fmt = s => isFinite(s) ? Math.floor(s/60)+":"+String(Math.floor(s%60)).padStart(2,"0") : "0:00";
+
+let idx = 0, msgIdx = 0;
+
+function showMessage(i){
+  const el = $("msgText"); el.style.opacity = 0;
+  setTimeout(()=>{ msgIdx = i % MESSAGES.length; el.textContent = MESSAGES[msgIdx]; el.style.opacity = 1; }, 220);
+}
+
+function loadSong(i, autoplay){
+  idx = i;
+  const s = SONGS[idx];
+  $("title").textContent = s.title;
+  $("artist").textContent = s.artist;
+  $("fill").style.width = "0%"; $("cur").textContent = "0:00"; $("dur").textContent = "0:00";
+  audio.src = s.audio;
+  if (autoplay) audio.play().catch(()=>{});
+}
+
+$("play").onclick = () => audio.paused ? audio.play().catch(()=>{}) : audio.pause();
+$("msg").onclick = () => showMessage(msgIdx + 1);
+
+audio.addEventListener("play",  ()=>{ $("play").innerHTML = PAUSE; });
+audio.addEventListener("pause", ()=>{ $("play").innerHTML = PLAY; });
+audio.addEventListener("playing", ()=>{ $("hint").textContent = ""; });
+audio.addEventListener("loadedmetadata", ()=>{ $("dur").textContent = fmt(audio.duration); });
+audio.addEventListener("timeupdate", ()=>{
+  $("fill").style.width = (audio.duration ? audio.currentTime/audio.duration*100 : 0) + "%";
+  $("cur").textContent = fmt(audio.currentTime);
+});
+audio.addEventListener("ended", ()=>{
+  if (idx < SONGS.length - 1){ loadSong(idx + 1, true); showMessage(idx); }
+  else if (LETTER_PAGE) location.href = LETTER_PAGE;
+  else if (LOOP){ loadSong(0, true); showMessage(0); }
+});
+audio.addEventListener("error", ()=>{
+  $("hint").textContent = "Can't find " + SONGS[idx].audio + " — put it in the songs folder.";
+});
+
+$("play").innerHTML = PLAY;
+$("msgText").textContent = MESSAGES[0];
+loadSong(0, false);
+
+/* Autoplay: starts on open. If the browser blocks sound, the first tap anywhere starts it. */
+function armFirstTouch(){
+  $("hint").textContent = "Tap anywhere to start the music";
+  const go = () => {
+    audio.play().catch(()=>{});
+    document.removeEventListener("click", go);
+    document.removeEventListener("keydown", go);
+  };
+  document.addEventListener("click", go);
+  document.addEventListener("keydown", go);
+}
+audio.play().catch(armFirstTouch);
+</script>
+</body>
+</html>
